@@ -1,7 +1,10 @@
 const WebSocket = require('ws');
 const axios = require('axios');
 const { urlencoded } = require('express');
-require('dotenv').config();
+
+// 환경에 따라 .env 파일 로드
+const env = process.env.NODE_ENV || 'development';
+require('dotenv').config({ path: `.env.${env}` });
 
 const PORT = process.env.PORT || 8282;
 const API_URL = process.env.SERVER_URL || 'http://localhost:8282';

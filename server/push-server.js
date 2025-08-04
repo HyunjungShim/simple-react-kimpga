@@ -4,6 +4,10 @@ const cors = require('cors');
 const path = require('path');
 const CryptoPriceMonitor = require('./coin-socket');
 
+// 환경에 따라 .env 파일 로드
+const env = process.env.NODE_ENV || 'development';
+require('dotenv').config({ path: `.env.${env}` });
+
 const app = express();
 const PORT = process.env.PORT || 8282;
 
