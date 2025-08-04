@@ -1,4 +1,5 @@
 import { ClearButton, CustomInput, FlexBox } from "../../assets/styles/common/CommonStyle";
+import { CloseOutlined } from "@ant-design/icons";
 
 type SearchInputProps = {
     searchInput: string,
@@ -9,7 +10,9 @@ export default function SearchInput({ searchInput, setSearchInput }: SearchInput
     return (
         <FlexBox style={{position: 'relative'}}>
             <CustomInput placeholder="코인 검색" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
-            {searchInput.trim() !== '' && <ClearButton onClick={() => setSearchInput('')}>🗙</ClearButton>}
+            {searchInput.trim() !== '' && <ClearButton onClick={() => setSearchInput('')}>
+                <CloseOutlined />
+            </ClearButton>}
         </FlexBox>
     )
 }
