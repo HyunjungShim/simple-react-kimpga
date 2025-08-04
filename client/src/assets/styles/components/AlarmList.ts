@@ -72,17 +72,17 @@ export const KimpStatusItem = styled.div`
       grid-row:1;
       grid-column: 3 / 3;
     } */
-      *:nth-child(1) {
+    &:not(.edit-alarm-list):nth-child(1) {
       grid-row:1;
       grid-column: 1 / 1;
     }
-    *:nth-child(2) {
+    &:not(.edit-alarm-list):nth-child(2) {
       grid-row:2;
     }
-    *:nth-child(3) {
+    &:not(.edit-alarm-list):nth-child(3) {
       grid-row:2;
     }
-    *:nth-child(4) {
+    &:not(.edit-alarm-list):nth-child(4) {
       grid-row:1;
       grid-column: 2 / 2;
     }
