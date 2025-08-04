@@ -5,8 +5,6 @@
   "main": "push-server.js",
   "scripts": {
     "start": "node push-server.js",
-    "start:prod": "npm run build:client && node push-server.js",
-    "build:client": "cd ../client && npm install && npm run build",
     "dev": "nodemon push-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +21,5 @@
     "pwa",
     "web-push",
     "express"
-  ],
-  "author": "Your Name",
-  "license": "MIT"
+  ]
 }
