@@ -6,4 +6,10 @@ services:
     startCommand: node server/push-server.js
     envVars:
       - key: NODE_ENV
-        value: production 
+        value: production
+    buildFilter:
+      paths:
+        - client/**
+        - server/**
+        - package.json
+        - render.yaml 

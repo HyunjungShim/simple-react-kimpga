@@ -5,7 +5,7 @@
   "main": "server/push-server.js",
   "scripts": {
     "start": "node server/push-server.js",
-    "build:client": "cd client && npm install && npm run build",
+    "build:client": "cd client && npm ci --only=production && npm run build",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "cd server && npm run dev",
     "dev:client": "cd client && npm start",
