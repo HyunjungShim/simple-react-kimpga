@@ -1,24 +1,18 @@
 // Service Worker for Push Notifications
-const CACHE_NAME = 'kimpga-v3'; // 버전 업데이트
+const CACHE_NAME = 'kimpga-v5'; // 버전 강제 업데이트
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
+  // 동적 파일명은 캐시하지 않음 (빌드 시마다 변경됨)
 ];
 
 // Install event - Service Worker 설치 시 캐시 생성
 self.addEventListener('install', (event) => {
+  console.log('Service Worker installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        // 캐시 추가 시 에러 처리
-        return Promise.allSettled(
-          urlsToCache.map(url => 
-            cache.add(url).catch(error => {
-              console.warn('Failed to cache URL:', url, error);
-            })
-          )
-        );
+        // 기본 페이지만 캐시
+        return cache.add('/');
       })
       .then(() => {
         // 이전 캐시들 삭제
@@ -33,6 +27,32 @@ self.addEventListener('install', (event) => {
           );
         });
       })
+      .then(() => {
+        // 즉시 활성화
+        return self.skipWaiting();
+      })
+  );
+});
+
+// Activate event - Service Worker 활성화 시
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...');
+  event.waitUntil(
+    Promise.all([
+      // 모든 클라이언트 제어
+      self.clients.claim(),
+      // 이전 캐시 정리
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+    ])
   );
 });
 
