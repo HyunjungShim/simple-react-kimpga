@@ -15,8 +15,7 @@ const PORT = process.env.PORT || 8282;
 app.use(cors());
 app.use(express.json());
 
-// 정적 파일 서빙
-app.use(express.static(path.join(__dirname, '../client/build')));
+// API 라우트들...
 
 // VAPID 키 생성 (실제 프로덕션에서는 환경변수로 관리)
 const vapidKeys = webpush.generateVAPIDKeys();
@@ -272,6 +271,9 @@ app.post('/api/schedule-notification', (req, res) => {
   
   res.json({ message: 'Notification scheduled successfully' });
 });
+
+// 정적 파일 서빙 (API 라우트 이후에 배치)
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 // React 앱 라우팅 - 모든 경로를 index.html로
 app.get('*', (req, res) => {
