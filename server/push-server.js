@@ -2,6 +2,7 @@ const express = require('express');
 const webpush = require('web-push');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const CryptoPriceMonitor = require('./coin-socket');
 
 // 환경에 따라 .env 파일 로드
@@ -273,10 +274,34 @@ app.post('/api/schedule-notification', (req, res) => {
 });
 
 // 정적 파일 서빙 (API 라우트 이후에 배치)
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use((req, res, next) => {
+  // 정적 파일 요청인지 확인
+  if (req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg)$/)) {
+    const filePath = path.join(__dirname, '../client/build', req.path);
+    console.log('Static file request:', req.path, '->', filePath);
+    
+    if (fs.existsSync(filePath)) {
+      console.log('File exists, serving:', filePath);
+      // 캐시 무효화 헤더 추가
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.sendFile(filePath);
+    } else {
+      console.log('File not found:', filePath);
+      res.status(404).send('File not found');
+    }
+  } else {
+    next();
+  }
+});
 
 // React 앱 라우팅 - 모든 경로를 index.html로
 app.get('*', (req, res) => {
+  // HTML 파일에 캐시 무효화 헤더 추가
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
