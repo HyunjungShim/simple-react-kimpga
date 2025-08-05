@@ -2,7 +2,6 @@ const express = require('express');
 const webpush = require('web-push');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs'); // fs 모듈 추가
 const CryptoPriceMonitor = require('./coin-socket');
 
 // 환경에 따라 .env 파일 로드
@@ -16,19 +15,8 @@ const PORT = process.env.PORT || 8282;
 app.use(cors());
 app.use(express.json());
 
-// 정적 파일 서빙 - 캐시 방지
-app.use(express.static(path.join(__dirname, '../client/build'), {
-  setHeaders: (res, path) => {
-    // HTML 파일은 캐시하지 않음
-    if (path.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    }
-    // JS/CSS 파일도 캐시하지 않음 (빌드 해시 문제 해결)
-    else if (path.endsWith('.js') || path.endsWith('.css')) {
-      res.setHeader('Cache-Control', 'no-cache');
-    }
-  }
-}));
+// 정적 파일 서빙
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 // VAPID 키 생성 (실제 프로덕션에서는 환경변수로 관리)
 const vapidKeys = webpush.generateVAPIDKeys();
@@ -285,17 +273,9 @@ app.post('/api/schedule-notification', (req, res) => {
   res.json({ message: 'Notification scheduled successfully' });
 });
 
-// React 앱 라우팅 - 정적 파일 우선 확인
+// React 앱 라우팅 - 모든 경로를 index.html로
 app.get('*', (req, res) => {
-  const filePath = path.join(__dirname, '../client/build', req.path);
-  
-  // 정적 파일이 존재하는지 확인
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    res.sendFile(filePath);
-  } else {
-    // 정적 파일이 없으면 HTML 반환
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
-  }
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
 app.listen(PORT, () => {
