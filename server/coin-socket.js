@@ -268,9 +268,11 @@ class CryptoPriceMonitor {
   // 환율 갱신 함수
   async fetchExchangeRate() {
     try {
-      const res = await axios.get('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
-      this.usdkrw = (res.data[0].trade_price);
-      // console.log('환율(USD/KRW):', this.usdkrw);
+      // const res = await axios.get('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
+      // this.usdkrw = (res.data[0].trade_price)+20;
+      const res = await axios.get('https://api.coinbase.com/v2/exchange-rates');
+      this.usdkrw = Number(res.data.data.rates.KRW).toFixed(1);
+      console.log('환율(USD/KRW):', this.usdkrw);
     } catch (e) {
       console.error('환율 가져오기 실패:', e);
     }
