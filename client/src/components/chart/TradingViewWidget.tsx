@@ -81,4 +81,4 @@ function TradingViewWidget({ symbol }: { symbol: string }) {
   );
 }
 
-export default memo(TradingViewWidget);
+export default React.memo(TradingViewWidget);

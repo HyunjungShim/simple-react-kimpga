@@ -8,7 +8,7 @@ type SearchInputProps = {
 
 export default function SearchInput({ searchInput, setSearchInput }: SearchInputProps) {
     return (
-        <FlexBox style={{position: 'relative'}}>
+        <FlexBox style={{position: 'relative', marginBottom: '20px'}}>
             <CustomInput placeholder="코인 검색" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
             {searchInput.trim() !== '' && <ClearButton onClick={() => setSearchInput('')}>
                 <CloseOutlined />

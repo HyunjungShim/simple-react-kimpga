@@ -50,8 +50,8 @@ export default function AlarmList({ kimpStatus, handleAlarmOpen, setAlarmCoin }:
                 <h3>현재 김프 상태 📈</h3>
                 <span>연결 상태: Binance {kimpStatus.connections?.binance ? '✅' : '❌'} | Upbit {kimpStatus.connections?.upbit ? '✅' : '❌'}</span>
             </FlexBox>
+            <SearchInput searchInput={searchInput} setSearchInput={setSearchInput} />
             <KimpStatus>
-                <SearchInput searchInput={searchInput} setSearchInput={setSearchInput} />
                 <KimpStatusItem className="header-item">
                     <p>코인</p>
                     <p
@@ -69,9 +69,7 @@ export default function AlarmList({ kimpStatus, handleAlarmOpen, setAlarmCoin }:
                     </p> */}
                     <FlexBox gap="5px" padding="0 0 0 30px" onClick={() => handleSort('krwPrice')} className="price-wrapper">
                         <span>
-                            가격(KRW)
-                            <br/>
-                            가격(USDT)
+                            현재가
                         </span>
                         <span>
                             <FontAwesomeIcon icon={faCircleChevronDown} flip={sortKey.krwPrice === 'asc' ? "horizontal" : "vertical"} style={{ color: theme.colors.text }} />
@@ -92,7 +90,8 @@ export default function AlarmList({ kimpStatus, handleAlarmOpen, setAlarmCoin }:
                                     <p>
                                         {priceFormatter(item.krwPrice, 'ko-KR')}
                                         <br/>
-                                        {priceFormatter(item.usdtPrice, 'en-US')}
+                                        {/* {priceFormatter(item.usdtPrice, 'en-US')} */}
+                                        {priceFormatter(item.convertedUsdtPrice, 'ko-KR')}
                                     </p>
                                     {/* <p>{priceFormatter(item.krwPrice, 'ko-KR')}</p> */}
                                     <FlexBox gap="10px">

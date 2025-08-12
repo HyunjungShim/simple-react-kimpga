@@ -98,12 +98,12 @@ export default function UserSetting() {
             {
                 permissionStatus === 'granted' && isSubscribed && (
                     <Card>
-                        <FlexBox gap="15px" justifycontent="space-between" alignitems="center" padding="20px 0">
+                        <FlexBox gap="15px" justifycontent="space-between" alignitems="center" padding="20px 0 10px">
                             <h3>알림 설정 목록</h3>
                         </FlexBox>
+                        <SearchInput searchInput={searchInput} setSearchInput={setSearchInput} />
                         {userAlarmList.length > 0 ? (
                             <KimpStatus>
-                                <SearchInput searchInput={searchInput} setSearchInput={setSearchInput} />
                                 <KimpStatusItem className="setting-alarm-list header-item">
                                     <p>코인</p>
                                     <p>현재 김프(%)</p>

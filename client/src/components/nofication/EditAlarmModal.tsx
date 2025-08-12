@@ -1,9 +1,11 @@
-import { Card, FlexBox, Input, ModalLayout, SuccessButton } from "../../assets/styles/common/CommonStyle";
+import { Button, Card, FlexBox, Input, ModalLayout, SuccessButton } from "../../assets/styles/common/CommonStyle";
 import SelectInput from "../common/SelectInput";
 import useGetAuth from "../../hooks/useManageAuth";
 import { useCallback, useMemo, useState } from "react";
 import { KimpStatusItem } from "../../assets/styles/components/AlarmList";
 import { SymbolContainer } from "../../assets/styles/components/AlarmList";
+import { DeleteOutlined } from "@ant-design/icons";
+import useManageAlarm from "../../hooks/useManageAlarm";
 
 type EditAlarmModalProps = {
   coinList: any,
@@ -18,6 +20,7 @@ type EditAlarmModalProps = {
 
 export default function EditAlarmModal({ coinList, kimpThreshold, setKimpThreshold, setAlarmCoin, handleUpdateKimpThreshold, handleAlarmOpen, alarmCoin, setUserAlarmList }: EditAlarmModalProps) {
   const { subscriberAlarmList, getSubscriberAlarmList } = useGetAuth();
+  const { handleRemoveSubscriberAlarm } = useManageAlarm({ kimpThreshold, alarmCoin });
   const currentAlarmCoin = useMemo(() => {
     return subscriberAlarmList.filter((item: any) => item.coin === alarmCoin);
   }, [alarmCoin, subscriberAlarmList]);
@@ -26,6 +29,13 @@ export default function EditAlarmModal({ coinList, kimpThreshold, setKimpThresho
     setKimpThreshold('');
     setAlarmCoin('');
   }, []);
+
+  const handleEditSubscriberAlarm = async (type: string, item: any) => {
+    if (type === 'remove') {
+      await handleRemoveSubscriberAlarm(item);
+      await getSubscriberAlarmList();
+    }
+  }
 
   const handleSuccessButton = async () => {
     let isValid = validateInput();
@@ -107,6 +117,9 @@ export default function EditAlarmModal({ coinList, kimpThreshold, setKimpThresho
                       <span>{item.coin}</span>
                     </SymbolContainer>
                     <p>{item.kimpThreshold}%</p>
+                    <Button onClick={() => handleEditSubscriberAlarm('remove', item)}>
+                        <DeleteOutlined />
+                    </Button>
                   </KimpStatusItem>
                 )
               })}

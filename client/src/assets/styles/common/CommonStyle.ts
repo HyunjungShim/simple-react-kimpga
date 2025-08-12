@@ -73,7 +73,7 @@ export const Button = styled.button`
   cursor: pointer;
   &.center {
     display:block;
-    margin: 0 auto;
+    margin: 20px auto 0;
   }
   &:hover {
     background: ${({ theme }) => theme.colors.buttonBgColor};

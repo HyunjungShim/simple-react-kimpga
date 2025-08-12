@@ -41,7 +41,7 @@ export default function KimpProvider({ children }: { children: React.ReactNode }
     }
     useEffect(() => {
         fetchKimpStatus();
-        const kimpInterval = setInterval(fetchKimpStatus, 10000); // 10초마다 업데이트
+        const kimpInterval = setInterval(fetchKimpStatus, 1000 * 2); // 10초마다 업데이트
         return () => clearInterval(kimpInterval);
     }, []);
     return (

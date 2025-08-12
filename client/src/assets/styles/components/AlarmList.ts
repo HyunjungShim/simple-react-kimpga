@@ -33,7 +33,11 @@ export const KimpStatusItem = styled.div`
     border-bottom: 1px solid ${({ theme }) => theme.colors.borderColor};
   }
   &.edit-alarm-list {
-    grid-template-columns: minmax(auto, 1fr) 1fr;
+    grid-template-columns: minmax(auto, 1fr) 1fr 1fr;
+    button {
+      width: 50%;
+      margin-left:auto;
+    }
   }
   &.setting-alarm-list {
     grid-template-columns: minmax(auto, 1fr) 1fr 1fr 1fr;
@@ -99,6 +103,7 @@ export const SymbolContainer = styled(FlexBox)`
   }
   img {
     width: 25px;
+    border-radius: 50%;
   }
   @media screen and (max-width: 768px) {
     font-size: 13px;
