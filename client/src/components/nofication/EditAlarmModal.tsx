@@ -4,7 +4,7 @@ import useGetAuth from "../../hooks/useManageAuth";
 import { useCallback, useMemo, useState } from "react";
 import { KimpStatusItem } from "../../assets/styles/components/AlarmList";
 import { SymbolContainer } from "../../assets/styles/components/AlarmList";
-import { DeleteOutlined } from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined } from "@ant-design/icons";
 import useManageAlarm from "../../hooks/useManageAlarm";
 
 type EditAlarmModalProps = {
@@ -80,7 +80,9 @@ export default function EditAlarmModal({ coinList, kimpThreshold, setKimpThresho
         <FlexBox flexdirection="column" gap="20px" alignitems="flex-start" className="w-100">
           <h3>
             🚨 김프 알림 설정
-            <span className="close-button" onClick={() => { handleAlarmOpen(); resetSettings(); }}>🗙</span>
+            <span className="close-button" onClick={() => { handleAlarmOpen(); resetSettings(); }}>
+              <CloseOutlined />
+            </span>
           </h3>
           <p className="mb-20 mt-20">설정한 김프 퍼센트에 도달하면 알림을 받습니다.</p>
           <div>
