@@ -1,37 +1,11 @@
-// Service Worker for Push Notifications
-const CACHE_NAME = 'kimpga-v5'; // 버전 강제 업데이트
-const urlsToCache = [
-  '/',
-  // 동적 파일명은 캐시하지 않음 (빌드 시마다 변경됨)
-];
+// Service Worker for Push Notifications Only
+// 캐싱 기능 완전 제거
 
-// Install event - Service Worker 설치 시 캐시 생성
+// Install event - Service Worker 설치 시
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing...');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        // 기본 페이지만 캐시
-        return cache.add('/');
-      })
-      .then(() => {
-        // 이전 캐시들 삭제
-        return caches.keys().then((cacheNames) => {
-          return Promise.all(
-            cacheNames.map((cacheName) => {
-              if (cacheName !== CACHE_NAME) {
-                console.log('Deleting old cache:', cacheName);
-                return caches.delete(cacheName);
-              }
-            })
-          );
-        });
-      })
-      .then(() => {
-        // 즉시 활성화
-        return self.skipWaiting();
-      })
-  );
+  // 즉시 활성화
+  event.waitUntil(self.skipWaiting());
 });
 
 // Activate event - Service Worker 활성화 시
@@ -41,14 +15,12 @@ self.addEventListener('activate', (event) => {
     Promise.all([
       // 모든 클라이언트 제어
       self.clients.claim(),
-      // 이전 캐시 정리
+      // 모든 캐시 삭제
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              console.log('Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
+            console.log('Deleting cache:', cacheName);
+            return caches.delete(cacheName);
           })
         );
       })
@@ -56,55 +28,10 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - 네트워크 요청 처리
+// Fetch event - 캐싱 없이 네트워크만 사용
 self.addEventListener('fetch', (event) => {
-  // Chrome 확장 프로그램 요청은 캐시하지 않음
-  if (event.request.url.startsWith('chrome-extension://') || 
-      event.request.url.startsWith('chrome://') ||
-      event.request.url.startsWith('moz-extension://')) {
-    return;
-  }
-
-  // HTML 파일이나 JS/CSS 파일은 네트워크 우선, 캐시 폴백
-  if (event.request.method === 'GET' && 
-      (event.request.url.includes('.js') || 
-       event.request.url.includes('.css') || 
-       event.request.url.includes('index.html'))) {
-    
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          // 성공하면 캐시에 저장 (HTTPS 또는 localhost만)
-          if (response.status === 200 && 
-              (event.request.url.startsWith('https://') || 
-               event.request.url.startsWith('http://localhost') ||
-               event.request.url.startsWith('http://127.0.0.1'))) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone).catch((error) => {
-                console.warn('Failed to cache request:', event.request.url, error);
-              });
-            });
-          }
-          return response;
-        })
-        .catch(() => {
-          // 네트워크 실패시 캐시에서 가져오기
-          return caches.match(event.request);
-        })
-    );
-  } else {
-    // 다른 리소스는 기존 로직 유지
-    event.respondWith(
-      caches.match(event.request)
-        .then((response) => {
-          if (response) {
-            return response;
-          }
-          return fetch(event.request);
-        })
-    );
-  }
+  // 모든 요청을 네트워크로만 처리
+  event.respondWith(fetch(event.request));
 });
 
 // Push event - 푸시 알림을 받았을 때 실행

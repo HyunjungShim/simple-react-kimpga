@@ -8,7 +8,7 @@ require('dotenv').config({ path: `.env.${env}` });
 
 const PORT = process.env.PORT || 8282;
 const API_URL = process.env.SERVER_URL || 'http://localhost:8282';
-console.log('API_URL',API_URL);
+// console.log('API_URL',API_URL);
 class CryptoPriceMonitor {
   constructor() {
     this.kimpPercentage = 0;
@@ -31,7 +31,7 @@ class CryptoPriceMonitor {
     this.initConnections();
     
     // 환율 주기적 갱신 (5분마다)
-    setInterval(() => this.fetchExchangeRate(), 5 * 60 * 1000);
+    setInterval(() => this.fetchExchangeRate(), 1000 * 2);
   }
 
   // 구독자 추가
@@ -62,7 +62,7 @@ class CryptoPriceMonitor {
       alarmList: [...existingSubscriber.alarmList, data],
       lastNotified: 0 // 새로운 알람 추가시 즉시 알림 가능
     });
-    console.log(`Subscriber edited: ${endpoint},${JSON.stringify(this.subscribers.get(endpoint))}`);
+    // console.log(`Subscriber edited: ${endpoint},${JSON.stringify(this.subscribers.get(endpoint))}`);
   }
   removeSubscriberAlarm(endpoint, data) {
     const existingSubscriber = this.subscribers.get(endpoint);
@@ -120,6 +120,7 @@ class CryptoPriceMonitor {
             }
           });
         //   console.log('binanceData',this.binanceData,this.binanceData.length);
+          // console.log(this.binanceData.find(item => item.ticker === 'XRP'));
           
           this.calculateKimp();
         } catch (error) {
@@ -168,7 +169,6 @@ class CryptoPriceMonitor {
       this.upbitWs.on('message', (data) => {
         try {
             const tickers = JSON.parse(data);
-            
             if (!this.upbitData) {
                 this.upbitData = [];
             }
@@ -189,6 +189,8 @@ class CryptoPriceMonitor {
                     });
                 }
             });
+            // console.log(this.upbitData.find(item => item.ticker === 'XRP'));
+            
             // console.log('upbitData',this.upbitData);
             this.calculateKimp();
           
@@ -266,9 +268,9 @@ class CryptoPriceMonitor {
   // 환율 갱신 함수
   async fetchExchangeRate() {
     try {
-      const res = await axios.get('https://api.frankfurter.app/latest?from=USD&to=KRW');
-      this.usdkrw = res.data.rates.KRW;
-    //   console.log('환율(USD/KRW):', this.usdkrw);
+      const res = await axios.get('https://api.upbit.com/v1/ticker?markets=KRW-USDT');
+      this.usdkrw = (res.data[0].trade_price);
+      // console.log('환율(USD/KRW):', this.usdkrw);
     } catch (e) {
       console.error('환율 가져오기 실패:', e);
     }
@@ -289,10 +291,12 @@ class CryptoPriceMonitor {
         return {
           ticker: item.ticker,
           usdtPrice: item.price,
+          convertedUsdtPrice: item.price * this.usdkrw,
           krwPrice: upbitItem.price,
           kimp: (((upbitItem.price - item.price * this.usdkrw) / (item.price * this.usdkrw)) * 100).toFixed(2)
         };
       });
+    // console.log(this.totalData.find(item => item.ticker === 'BTC'));
     
     // 구독자들에게 알림 전송
     this.checkAndNotifySubscribers();
@@ -324,7 +328,7 @@ class CryptoPriceMonitor {
         
         // 임계값을 넘었는지 체크 (양수/음수 모두 고려)
         if (currentKimp >= kimpThreshold) {
-          console.log(`Alarm triggered for ${endpoint}: ${coin} KIMP ${currentKimp}% (abs: ${Math.abs(currentKimp)}%) >= ${kimpThreshold}%`);
+          // console.log(`Alarm triggered for ${endpoint}: ${coin} KIMP ${currentKimp}% (abs: ${Math.abs(currentKimp)}%) >= ${kimpThreshold}%`);
           
           // 알림 전송
           this.sendKimpNotification(endpoint, coin, currentKimp,kimpThreshold);

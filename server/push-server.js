@@ -282,10 +282,12 @@ app.use((req, res, next) => {
     
     if (fs.existsSync(filePath)) {
       console.log('File exists, serving:', filePath);
-      // 캐시 무효화 헤더 추가
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      // 캐시 완전 비활성화
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, private');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
+      res.setHeader('Last-Modified', new Date().toUTCString());
+      res.setHeader('ETag', `"${Date.now()}"`);
       res.sendFile(filePath);
     } else {
       console.log('File not found:', filePath);
@@ -298,10 +300,12 @@ app.use((req, res, next) => {
 
 // React 앱 라우팅 - 모든 경로를 index.html로
 app.get('*', (req, res) => {
-  // HTML 파일에 캐시 무효화 헤더 추가
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  // 캐시 완전 비활성화
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, private');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
+  res.setHeader('Last-Modified', new Date().toUTCString());
+  res.setHeader('ETag', `"${Date.now()}"`);
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
